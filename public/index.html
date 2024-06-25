@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"></script>
+
+</head>
+<body>
+    <h1>hi yasser</h1>
+    <h5>now finsh 5 hours</h5>
+    <form action="" method="POST">
+        <input type="text" name="name" autocomplete="false" id="name">
+        <input type="text" name="search" autocomplete="false" id="searcht">
+        <button id="search">search </button>
+        <input type="submit" value="submit" id="submit">
+        <select name="item" id="item">
+           <option value="1" selected>1</option>
+        </select>
+        
+    </form>
+    <div class="res" style="background-color: aqua;">
+    </div>
+    <a href="api/v1/people/all" id="pl">deleteall</a>
+</body>
+</html>
+<script>
+    const res = document.querySelector('.res')
+    const item = document.getElementById('item')
+    const fetchpeople = async (task)=>{
+ try {
+ 	// const data = await axios.get('/api/v1/people')
+        if(!task){
+     let {data: {tasks}} = await axios.get('/api/v1/people')
+     task = tasks
+            console.log("NOT PROVIDED NORMAL ALL ")
+        }
+    // res.innerHTML = ""
+    res.textContent = ""
+    // console.log(data)
+    // let people =[]
+    // console.log(typeof(people),"PEOPLEt")
+ 	//  people = data.data.map((person)=>{
+        item.innerHTML =""
+         for (let i = 1; i <= task.length; i++ ) {
+             let element = document.createElement('option')
+             element.value = i 
+             element.textContent = i 
+             item.append(element)
+             
+         }
+ 	// 	return person.name + person._id ;
+
+ 	// })
+    const pl = document.getElementById("pl");
+    // data.data.forEach(element => {
+        
+        task.forEach(element => {   
+        // console.log(element.name)
+        let a = document.createElement('a')
+        let d = document.createElement('button')
+        a.href= "edite.html?id="+element._id
+        a.textContent = element.name
+        d.dataset.id = element._id
+        d.textContent = "DELETE"
+        // d.href=element._id
+        d.className = "delete"
+        res.appendChild(a)
+        res.appendChild(d)
+        // res.innerHTML += "<br/>"
+    
+    });
+    // console.log(typeof(people),"PEO",people)
+ 	//  res.innerHTML = people.join('<br/> ')
+   
+ 	
+ }catch(error) {
+    console.log(error)
+ res.innerHTML = 'CANT FETCH DATA'
+ }
+ 
+ }
+ //invoke the function 
+ fetchpeople()
+ res.addEventListener('click',async(e)=>{
+     
+     const el = e.target
+     console.log(el);
+     if (el.parentElement.classList.contains('delete')|| el.classList.contains('delete')) {
+         e.preventDefault()
+         console.log("TRY TO DELETE")
+    const id = el.dataset.id
+    console.log(el)
+    try {
+        await axios.delete(`/api/v1/people/${id}`)
+        fetchpeople()
+    } catch (error) {
+        console.log(error)        
+    }
+}
+ })
+ var ditem = document.getElementsByClassName(".delete")
+ console.log(ditem)
+    console.log(ditem.length,"len");
+  
+        // ditem.forEach( (item) => {
+        //     item.preventDefault()
+        //     console.log(this.dataset)
+        // })
+    const name = document.getElementById('name')
+    const sub = document.getElementById('submit')
+    sub.addEventListener('click',async (e)=>{
+        e.preventDefault()
+        try {
+            const value = name.value
+            const {data: {task}} = await axios.post('/api/v1/people',{name: value})
+            console.log(task)
+            // const data = await axios.post('/api/v1/people',{name: value})
+            // console.log(data)
+            
+            // const pname = data.data.task.name;
+            // res.innerHTML += " " + value
+            // res.innerHTML += " " + pname
+            fetchpeople();
+ 	
+    }catch(error) {
+    res.innerHTML = 'CANT FETCH DATA'
+    }
+    name.value = ""
+    })
+
+const all = document.getElementById('pl')
+
+all.addEventListener('click',async (e)=>{
+e.preventDefault()
+console.log("HELO")
+
+try {
+        await axios.delete(`/api/v1/people`)
+        fetchpeople()
+    } catch (error) {
+        console.log(error)        
+    }
+
+})
+const find = document.getElementById("search")
+const st = document.getElementById("searcht")
+
+find.addEventListener("click",async(e)=>{
+    try {
+        e.preventDefault()
+        console.log(st.value)
+        let search = st.value
+        
+        var value = item.options[item.selectedIndex].value;
+        var text = item.options[item.selectedIndex].text;
+        let page = text
+        if(search){
+        const {data:{task},data:{itemid} } = await axios.get(`/api/v1/people/search/item/${search}?page=${item.value}`);
+        // console.log(item)
+        console.log(itemid,"ITEMID")
+
+        console.log(task)
+       fetchpeople(task) 
+        }
+        else{
+            console.log("END")
+            return false;
+        }
+        
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+</script>

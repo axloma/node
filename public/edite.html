@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"></script>
+
+</head>
+<body>
+    <h1>hi yasser</h1>
+    <h5>now finsh 5 hours</h5>
+    <form action="" method="POST">
+        <input type="text" name="name" autocomplete="false" id="name">
+        <input type="text" name="id" autocomplete="false" id="id">
+        <input type="checkbox" name="completed"  id="completed">
+       
+        <input type="submit" value="submit" id="submit">
+
+    </form>
+    <div class="res" style="background-color: aqua;">
+    <a href="" id="pl"></a>
+    </div>
+</body>
+</html>
+<script>
+     const res = document.querySelector('.res')
+    //TODO get search id 
+    const params = window.location.search
+    const id = new URLSearchParams(params).get('id')
+    const name = document.getElementById('name')
+    const id_v = document.getElementById('id')
+    const completed = document.getElementById('completed')
+    const sub = document.getElementById('submit')
+
+
+    //  console.log(stask)
+    const fetchpeople = async ()=>{
+ try {
+    // const data = await axios.get(`/api/v1/people/${id}`)
+    //distructure data as stask 
+    const { data: {stask},} = await axios.get(`/api/v1/people/${id}`)
+console.log("HI")
+console.log(stask)
+    // name.value = data.data.stask.name
+ 	// id_v.value = data.data.stask.id
+     name.value = stask.name
+ 	id_v.value = stask.id
+
+    if(stask.completed == true){
+        completed.checked = true
+    }
+ }catch(error) {
+ res.innerHTML = 'CANT FETCH DATA'
+ }
+ 
+ }
+ fetchpeople()
+sub.addEventListener('click',async(e)=>{
+    e.preventDefault()
+    console.log("TRY UPDATE")
+    try {
+        let newname = name.value
+        let newid = String(id_v.value)
+        console.log(newname)
+        let taskcompleted = completed.checked;
+       const {data: {stask}} = await axios.patch(`/api/v1/people/${id}`,{name:newname,id:newid,completed:taskcompleted})
+        
+       console.log(stask)
+    } catch (error) {
+        console.log(error)
+    }
+
+})
+</script>
+
+
+
+

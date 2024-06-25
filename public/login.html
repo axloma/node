@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"></script>
+
+</head>
+<body>
+    <h1>login yasser</h1>
+
+    <form action="" method="POST">
+        <input type="text" name="name" autocomplete="false" id="name">
+        <input type="text" name="password" autocomplete="false" id="pass">
+        <button id="view">view </button>
+        <input type="submit" value="submit" id="submit">
+        <button id="login">login </button>
+    </form>
+    <button id="add">add </button>
+    <button id="get">get </button>
+    <button id="delete">delete </button>
+
+    <div class="res" style="background-color: aqua;" id="res">
+    </div>
+</body>
+</html>
+<script>
+    const sub = document.getElementById('submit')
+    const view = document.getElementById('view')
+    const res = document.getElementById('res')
+    const username = document.getElementById('name')
+    const pass = document.getElementById('pass')
+    const login = document.getElementById('login')
+    const addc = document.getElementById('add')
+    const vc = document.getElementById('get')
+   
+    const fetch = async(e)=>{
+        e.preventDefault()
+        res.innerHTML =""
+        try {
+            const token = localStorage.getItem('token')
+            const {data: {course}} =  await axios.get('/api/v1/people/login/course',{
+                headers:{
+                    Authorization:`Bearer ${token}`,
+                },
+                })
+            console.log(course,"course")
+            const cname = course.map((e)=>{
+                
+                res.innerHTML += `<a href="/api/v1/people/login/course/${e._id}" data-id=${e._id} id="get">${e.name} ${e.createdAt}<a/>
+                    <button id="del" data-id=${e._id}>del</button>
+                    `
+                   
+                    return e.name
+            })
+            console.log(cname)
+                
+            
+            // res.innerHTML += cname
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    vc.addEventListener('click',(e)=>{
+        fetch(e)
+    })
+    res.addEventListener('click',async(e)=>{
+        const token = localStorage.getItem('token')
+
+                        e.preventDefault()
+                        const t = e.target;
+                        console.log(t.nodeName)
+                        if(t.tagName == "A"){
+
+                        console.log(t.nodeName)
+                        console.log(t.href,t.dataset.id,t.tagName)
+                        const id  = t.dataset.id
+                        const {data:{course}} = await axios.get(`/api/v1/people/login/course/${id}`,{
+                headers:{
+                    Authorization:`Bearer ${token}`,
+                },
+                })
+                        console.log(course)
+                        }
+                        if(t.tagName == "BUTTON"){
+                            const id  = t.dataset.id
+
+                            const {data:{course}} = await axios.delete(`/api/v1/people/login/course/${id}`,{
+                headers:{
+                    Authorization:`Bearer ${token}`,
+                },
+                })
+                        console.log(course)
+                            console.log("G",t.dataset.id)
+                            fetch(e)
+
+                        }
+
+                    })
+
+    addc.addEventListener('click',async(e)=>{
+        e.preventDefault()
+        try {
+            const token = localStorage.getItem('token')
+            const {data: {course}} =  await axios.post('/api/v1/people//login/course',{name:username.value},{
+                headers:{
+                    Authorization:`Bearer ${token}`,
+                },
+                })
+            console.log(course,"course")
+            // res.innerHTML += course.name
+            fetch(e)
+            
+        } catch (error) {
+            console.log(error)
+        }
+    })
+    login.addEventListener('click',async (e)=>{
+        e.preventDefault()
+        const name = username.value
+        const password = pass.value
+        const {data: {user},data:{token}} = await axios.post('/api/v1/people/login/loginuser',{name,password})
+        console.log("LOGIN NOW ",user) 
+        console.log(token,"TOKEN")
+        localStorage.setItem('token',token)
+        fetch(e)
+
+    })
+
+    view.addEventListener('click',async(e)=>{
+        e.preventDefault()
+    const token = localStorage.getItem('token')
+        
+    //    const {data:{token}} =  await axios.get('/api/v1/people/login/loginuser')
+    //    console.log(token)
+    //    localStorage.setItem('token',token)
+         const {data: {decoded},data:{user}} =  await axios.get('/api/v1/people//login/gettoken',{
+        headers:{
+            Authorization:`Bearer ${token}`,
+        },
+        })
+        console.log(decoded,"DEDODED TOKEN")
+    // res.innerHTML += decoded.name + decoded.uid
+    res.innerHTML += user.name + user.id
+
+    //    localStorage.removeItem('token')
+    })
+    sub.addEventListener('click',async(e)=>{
+        // const token = localStorage.getItem('token')
+        e.preventDefault()
+        console.log("GET DATA")
+        let name = username.value 
+        let password = pass.value
+
+        // const {data: {decoded}} =  await axios.get('/api/v1/people//login/gettoken',{
+        // headers:{
+        //     Authorization:`Bearer ${token}`,
+        // },
+        // })
+        const {data: {user},data: {token}} = await axios.post('/api/v1/people/login/signuser',{name,password})
+        console.log("GET DATA")
+        console.log(user)
+        console.log(token)
+        localStorage.setItem('token',token)
+        // res.innerHTML += decoded.name
+        
+    })
+
+</script>

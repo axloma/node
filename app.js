@@ -82,7 +82,7 @@ if (err) {
 console.log(err);
 return ;
 }
-console.log(result,"WRITEN")
+console.log(result,"WRITEN FILE")
 });
 
 
@@ -92,7 +92,34 @@ const flatdeep = _.flattenDeep(items)
 console.log(flatdeep)
 
 
+const getText = (path) =>{
+return new Promise((resolve,reject)=>{
+readFile(path,'utf8',(err,data) => {
+if (err) {
+reject(err)
+return
+}else{
+resolve(data)
+console.log(data,"PROMISE")
+}
+
+})
+})
+}
+//getText('./content/subfolder/first.txt')
+//.then((result) => console.log(result))
+//.catch((err) => console.log(err))
 
 
+const start = async () => {
+try {
+const first = await getText('./content/subfolder/first.txt')
+console.log (first)
+}catch (error) {
+console.log(error)
+}
+}
+//envoke the function 
+start()
 
 

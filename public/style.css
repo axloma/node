@@ -1,0 +1,16 @@
+*{
+ box-sizing: border-box;   
+}
+body{
+    background-color: black;
+}
+h1{
+    background-color: blue;
+}
+.res{
+    /* display: flex; */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* flex-direction: column; */
+    justify-content: space-evenly;
+}
