@@ -151,21 +151,26 @@
     sub.addEventListener('click',async(e)=>{
         // const token = localStorage.getItem('token')
         e.preventDefault()
-        console.log("GET DATA")
-        let name = username.value 
-        let password = pass.value
-
-        // const {data: {decoded}} =  await axios.get('/api/v1/people//login/gettoken',{
-        // headers:{
-        //     Authorization:`Bearer ${token}`,
-        // },
-        // })
-        const {data: {user},data: {token}} = await axios.post('/api/v1/people/login/signuser',{name,password})
-        console.log("GET DATA")
-        console.log(user)
-        console.log(token)
-        localStorage.setItem('token',token)
-        // res.innerHTML += decoded.name
+        try {
+            
+            console.log("GET DATA")
+            let name = username.value 
+            let password = pass.value
+    
+            // const {data: {decoded}} =  await axios.get('/api/v1/people//login/gettoken',{
+            // headers:{
+            //     Authorization:`Bearer ${token}`,
+            // },
+            // })
+            const {data: {user},data: {token}} = await axios.post('/api/v1/people/login/signuser',{name,password})
+            console.log("GET DATA")
+            console.log(user)
+            console.log(token)
+            localStorage.setItem('token',token)
+            // res.innerHTML += decoded.name
+        } catch (error) {
+            console.log(error)
+        }
         
     })
 

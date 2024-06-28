@@ -57,12 +57,18 @@ const dcourse = async(req,res)=>{
 //create new user
 const createuser = async(req,res)=>{
     console.log(req.body)
-    const user = await User.create({...req.body})
-    const token = user.ctoken()
-    console.log(token,"TOKEN",user,"USER")
-    // const user = await User.create(req.body)
-    // const user = await User.create({name:"yasser4",password:"yaso136",id:4})
-    res.status(201).json({user,token})
+    try {
+        
+        const user = await User.create({...req.body})
+        const token = user.ctoken()
+        console.log(token,"TOKEN",user,"USER")
+        // const user = await User.create(req.body)
+        // const user = await User.create({name:"yasser4",password:"yaso136",id:4})
+        res.status(201).json({user,token})
+    } catch (error) {
+        console.log(error)
+    }
+    
 }
 
 
@@ -186,17 +192,14 @@ const search =  async(req,res)=>{
         // console.log(item2,"ITEM2")
         console.log(req.params)
         console.log(tr)
-        console.log(req.query)
-               
-        // res.status(200).json({task});   
-        
+        console.log(req.query)              
+        // res.status(200).json({task});          
         /////////pagegnition using skip and limit
         const page = Number(req.query.page) || 1
         const limit =  Number(req.query.limit) || 3
         const skip =  (page - 1) * limit 
         item = item.skip(skip).limit(limit)
-        let task =  await item
- 
+        let task =  await item 
         res.status(200).json({task,itemid}) 
 
     } catch (error) {
@@ -206,8 +209,7 @@ const search =  async(req,res)=>{
     
 }
 const loginuser =  async(req,res) =>{
-    try {
-        
+    try {        
         // const tasks = await Task.find({})//TODO get all obj in db
         // console.log(tasks)
         const token = await jwt.sign({name:"yasser"},"yaso136",{expiresIn:'3d'})
@@ -217,12 +219,11 @@ const loginuser =  async(req,res) =>{
 
     } catch (error) {
         console.log(error)
-
     }
 }
+
 const gettoken =  async(req,res) =>{
     try {
-
         const token = req.headers.authorization 
         console.log("TOKEN",token)
         const checktoken = token.split(' ')[1]
@@ -230,13 +231,9 @@ const gettoken =  async(req,res) =>{
         console.log(decoded)
         const user = req.user
         res.status(200).json({decoded,user})
-
     } catch (error) { 
-
         console.log(error)
-
     }
-
 }
 module.exports = {
     getalltask,
